@@ -7,9 +7,12 @@ public class Player : MonoBehaviour
 {
 
     Rigidbody2D rb;
+    PolygonCollider2D coll;
     [SerializeField] Tilemap hazard;
+    [SerializeField] Tilemap ground;
     [SerializeField] int jumpForce;
     [SerializeField] int speed;
+    [SerializeField] float fallDamageThreshold;
     [SerializeField] float deathInputDelay;
     Vector2 respawnPosition;
     bool inputReady;
@@ -19,6 +22,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        coll = GetComponent<PolygonCollider2D>();
 
         // TEMPORARY
         respawnPosition = new Vector2(1, -2.52f);
@@ -33,14 +37,25 @@ public class Player : MonoBehaviour
         {
             rb.velocity = new Vector2(Input.GetAxis("Horizontal") * speed, rb.velocity.y);
 
-            if (Input.GetButtonDown("Jump"))
+            if (Input.GetButtonDown("Jump") && coll.IsTouching(ground.GetComponent<TilemapCollider2D>()))
             {
                 rb.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
             }
         }
     }
 
-    // Check for collisions
+    // Fall damage
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Ground" && collision.relativeVelocity.y > fallDamageThreshold)
+        {
+            Debug.Log("Fall damage death");
+            Die();
+        }
+    }
+
+    // Check for triggers
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.tag == "Dangerous")

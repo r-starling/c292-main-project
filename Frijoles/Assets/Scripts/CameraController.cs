@@ -8,16 +8,19 @@ public class CameraController : MonoBehaviour
 
     [SerializeField] Transform playerPositionTransform;
     Transform tf;
+    Rigidbody2D rb;
     Vector2 playerPosition;
     Vector2 position;
     Vector2 displacement;
     [SerializeField] float xTolerance;
     [SerializeField] float yTolerance;
+    [SerializeField] float forceScale;
 
     // Start is called before the first frame update
     void Start()
     {
         tf = GetComponent<Transform>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
@@ -30,12 +33,12 @@ public class CameraController : MonoBehaviour
 
         if (Mathf.Abs(displacement.x) > xTolerance)
         {
-            position.x = playerPosition.x + (displacement.normalized * xTolerance).x;
+            rb.AddForce(new Vector2 (-displacement.x, 0) * forceScale, ForceMode2D.Impulse);
         }
 
         if (Mathf.Abs(displacement.y) > yTolerance)
         {
-            position.y = playerPosition.y + (displacement.normalized * yTolerance).y;
+            rb.AddForce(new Vector2(0, -displacement.y) * forceScale, ForceMode2D.Impulse);
         }
 
         tf.position = new Vector3(position.x, position.y, tf.position.z);
