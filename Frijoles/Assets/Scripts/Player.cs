@@ -12,7 +12,6 @@ public class Player : MonoBehaviour
 
     [SerializeField] Tilemap hazard;
     [SerializeField] Tilemap ground;
-    [SerializeField] Canvas canvas;
 
     [SerializeField] float jumpForce;
     [SerializeField] float speed;
@@ -43,6 +42,9 @@ public class Player : MonoBehaviour
 
         deathInputDelay = 0.25f;
 
+        hasDash = false;
+        hasDive = false;
+
         // TEMPORARY
         respawnPosition = new Vector2(1, -2.52f);
     }
@@ -55,8 +57,8 @@ public class Player : MonoBehaviour
             MoveHorizontal();
 
             if (Input.GetButtonDown("Jump")) { Jump(); };
-            if (Input.GetButtonDown("Dash")) { Dash(); };
-            if (Input.GetButtonDown("Dive")) { Dive(); };
+            if (Input.GetButtonDown("Dash") && hasDash) { Dash(); };
+            if (Input.GetButtonDown("Dive") && hasDive) { Dive(); };
         }
     }
 
@@ -81,12 +83,19 @@ public class Player : MonoBehaviour
         {
             Die();
         }
+        if (other.gameObject.tag == "Tomato")
+        {
+            other.gameObject.GetComponent<Tomato>().Get(gameObject);
+        }
     }
 
     // Horizontal movement
     private void MoveHorizontal()
     {
         rb.velocity = new Vector2(Input.GetAxis("Horizontal") * speed, rb.velocity.y);
+
+        if (rb.velocity.x > 0) { GetComponent<SpriteRenderer>().flipX = true; }
+        else if (rb.velocity.x < 0) { GetComponent<SpriteRenderer>().flipX = false;  }
     }
 
     // Jump
@@ -139,12 +148,24 @@ public class Player : MonoBehaviour
         }
     }
 
+    // Pick up an upgrade
+    public void GetUpgrade(string name)
+    {
+        if (name == "Dash")
+        {
+            hasDash = true;
+        }
+        if (name == "Dive")
+        {
+            hasDive = true;
+        }
+    }
+
     // Kill and respawn player
     private void Die()
     {
         GetComponent<Transform>().position = new Vector3(respawnPosition.x, respawnPosition.y, 0);
         rb.velocity = Vector2.zero;
-        StartCoroutine(canvas.GetComponent<UIController>().FadeToBlackAndBack());
         DisableInputsForDuration(deathInputDelay);
     }
 

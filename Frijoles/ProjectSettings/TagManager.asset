@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Dangerous
   - Ground
+  - Tomato
   layers:
   - Default
   - TransparentFX
