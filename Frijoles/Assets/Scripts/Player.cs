@@ -87,6 +87,10 @@ public class Player : MonoBehaviour
         {
             other.gameObject.GetComponent<Tomato>().Get(gameObject);
         }
+        if (other.gameObject.tag == "Corn")
+        {
+            other.gameObject.GetComponent<Corn>().Get(gameObject);
+        }
     }
 
     // Horizontal movement
