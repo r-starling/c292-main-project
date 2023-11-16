@@ -2,7 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using TMPro;
 using UnityEngine.Tilemaps;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -12,6 +14,8 @@ public class Player : MonoBehaviour
 
     [SerializeField] Tilemap hazard;
     [SerializeField] Tilemap ground;
+
+    [SerializeField] TextMeshProUGUI finishText;
 
     [SerializeField] float jumpForce;
     [SerializeField] float speed;
@@ -33,6 +37,8 @@ public class Player : MonoBehaviour
 
     bool isDiving;
 
+    bool gameOver;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -44,6 +50,8 @@ public class Player : MonoBehaviour
 
         hasDash = false;
         hasDive = false;
+
+        finishText.enabled = false;
 
         // TEMPORARY
         respawnPosition = new Vector2(1, -2.52f);
@@ -59,6 +67,11 @@ public class Player : MonoBehaviour
             if (Input.GetButtonDown("Jump")) { Jump(); };
             if (Input.GetButtonDown("Dash") && hasDash) { Dash(); };
             if (Input.GetButtonDown("Dive") && hasDive) { Dive(); };
+        }
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
 
@@ -90,6 +103,10 @@ public class Player : MonoBehaviour
         if (other.gameObject.tag == "Corn")
         {
             other.gameObject.GetComponent<Corn>().Get(gameObject);
+        }
+        if (other.gameObject.tag == "Finish")
+        {
+            EndGame();
         }
     }
 
@@ -171,6 +188,17 @@ public class Player : MonoBehaviour
         GetComponent<Transform>().position = new Vector3(respawnPosition.x, respawnPosition.y, 0);
         rb.velocity = Vector2.zero;
         DisableInputsForDuration(deathInputDelay);
+    }
+
+    // End the game, showing finish text and visually removing the player
+    private void EndGame()
+    {
+        finishText.enabled = true;
+        inputReady = false;
+        gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        rb.velocity = Vector2.zero;
+        rb.angularVelocity = 0;
+        rb.bodyType = RigidbodyType2D.Static;
     }
 
     // Toggle input readiness
