@@ -188,6 +188,7 @@ public class Player : MonoBehaviour
         GetComponent<Transform>().position = new Vector3(respawnPosition.x, respawnPosition.y, 0);
         rb.velocity = Vector2.zero;
         DisableInputsForDuration(deathInputDelay);
+        GetComponent<BlackScreen>().StartFade();
     }
 
     // End the game, showing finish text and visually removing the player
