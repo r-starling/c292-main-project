@@ -34,6 +34,7 @@ public class Player : MonoBehaviour
     float cooldown;
 
     float deathInputDelay;
+    int deathCount;
 
     bool isDiving;
 
@@ -47,6 +48,7 @@ public class Player : MonoBehaviour
         inputReady = true;
 
         deathInputDelay = 0.25f;
+        deathCount = 0;
 
         hasDash = false;
         hasDive = false;
@@ -185,6 +187,7 @@ public class Player : MonoBehaviour
     // Kill and respawn player
     private void Die()
     {
+        deathCount++;
         GetComponent<Transform>().position = new Vector3(respawnPosition.x, respawnPosition.y, 0);
         rb.velocity = Vector2.zero;
         DisableInputsForDuration(deathInputDelay);
@@ -194,6 +197,7 @@ public class Player : MonoBehaviour
     // End the game, showing finish text and visually removing the player
     private void EndGame()
     {
+        finishText.text = "CONGRATULATIONS!\nDemo completed (" + deathCount + " deaths)\n\n\nPress R to restart.";
         finishText.enabled = true;
         inputReady = false;
         gameObject.GetComponent<SpriteRenderer>().enabled = false;
