@@ -98,15 +98,15 @@ public class Player : MonoBehaviour
         {
             Die();
         }
-        if (other.gameObject.tag == "Tomato")
+        else if (other.gameObject.tag == "Tomato")
         {
             other.gameObject.GetComponent<Tomato>().Get(gameObject);
         }
-        if (other.gameObject.tag == "Corn")
+        else if (other.gameObject.tag == "Corn")
         {
             other.gameObject.GetComponent<Corn>().Get(gameObject);
         }
-        if (other.gameObject.tag == "Finish")
+        else if (other.gameObject.tag == "Finish")
         {
             EndGame();
         }

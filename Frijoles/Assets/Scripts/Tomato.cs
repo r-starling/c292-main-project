@@ -24,7 +24,6 @@ public class Tomato : MonoBehaviour
         else if (textDuration < 0)
         {
             upgradeText.enabled = false;
-            gameObject.SetActive(false);
         }
     }
 
